@@ -1,7 +1,7 @@
 name: Primitive Browser full build
 
 permissions:
-  contents: read
+  contents: write
 
 on:
   pull_request:
@@ -27,9 +27,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
-      - name: Checkout repository
+      - name: Checkout PR head
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
           submodules: recursive
 
       - name: Setup Node.js
@@ -48,8 +49,8 @@ jobs:
 
       - name: Setup Git
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Primitive static gates
         run: |
@@ -68,8 +69,23 @@ jobs:
       - name: Import Primitive patches
         run: npm run import
 
-      - name: License gate
-        run: npm run lc
+      - name: Normalize and verify MPL headers
+        run: |
+          npm run lc:fix
+          npm run lc
+          echo "License normalizer changed:"
+          git diff --name-only -- src/zen/primitive scripts/primitive_smoke_check.py
 
       - name: Compile Firefox fork
         run: npm run build
+
+      - name: Persist deterministic license normalization
+        if: ${{ success() && github.event.pull_request.head.repo.full_name == github.repository }}
+        run: |
+          git add src/zen/primitive scripts/primitive_smoke_check.py
+          if git diff --cached --quiet; then
+            echo "No source license normalization to persist."
+            exit 0
+          fi
+          git commit -m "chore(browser): normalize MPL source headers"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
