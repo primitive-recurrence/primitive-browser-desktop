@@ -1,3 +1,7 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 // Primitive Browser interaction refinements.
 // Keeps layout/search behavior separate from the core shell so upstream Zen
 // conflicts remain small and easy to diagnose during the first executable run.
@@ -142,7 +146,10 @@ class PrimitivePanelLayout {
       this.resizeHandle.removeEventListener("pointermove", move);
       this.resizeHandle.removeEventListener("pointerup", up);
       delete this.panel.dataset.resizing;
-      Services.prefs.setIntPref(`${PREF_PREFIX}panelWidth`, this.width);
+      Services.prefs.setIntPref(
+        `${PREF_PREFIX}panelWidth`,
+        Math.round(this.width)
+      );
     };
 
     this.resizeHandle.addEventListener("pointermove", move);
@@ -217,10 +224,14 @@ class PrimitivePanelLayout {
   }
 }
 
-function initializeExperience() {
+function initializeExperience(attempt = 0) {
   const shell = window.gPrimitiveShell;
   if (!shell) {
-    requestAnimationFrame(initializeExperience);
+    if (attempt < 120) {
+      requestAnimationFrame(() => initializeExperience(attempt + 1));
+    } else {
+      console.error("[Primitive] Experience enhancement could not find shell");
+    }
     return;
   }
   enhanceSearch(shell);
@@ -230,7 +241,7 @@ function initializeExperience() {
 }
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initializeExperience, {
+  document.addEventListener("DOMContentLoaded", () => initializeExperience(), {
     once: true,
   });
 } else {
