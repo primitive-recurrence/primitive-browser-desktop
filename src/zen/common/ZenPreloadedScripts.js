@@ -31,6 +31,7 @@
     "resource:///modules/zen/share/ZenShareManager.mjs",
     "chrome://browser/content/primitive/PrimitiveShell.mjs",
     "chrome://browser/content/primitive/PrimitiveCapture.mjs",
+    "chrome://browser/content/primitive/PrimitiveExperience.mjs",
   ];
 
   for (let script of scripts) {
