@@ -1,9 +1,15 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 # Primitive Browser shell module
 # New Primitive-owned files are kept separate from Zen/Firefox source so the
 # browser can track upstream without burying product logic in vendor patches.
 
         content/browser/primitive/PrimitiveShell.mjs                              (../../zen/primitive/PrimitiveShell.mjs)
         content/browser/primitive/PrimitiveCapture.mjs                            (../../zen/primitive/PrimitiveCapture.mjs)
+        content/browser/primitive/PrimitiveExperience.mjs                         (../../zen/primitive/PrimitiveExperience.mjs)
         content/browser/primitive/styles/primitive-theme.css                     (../../zen/primitive/styles/primitive-theme.css)
         content/browser/primitive/styles/primitive-shell.css                     (../../zen/primitive/styles/primitive-shell.css)
+        content/browser/primitive/styles/primitive-experience.css                (../../zen/primitive/styles/primitive-experience.css)
         content/browser/primitive/assets/primitive-mark.svg                      (../../zen/primitive/assets/primitive-mark.svg)
