@@ -34,6 +34,7 @@
     "chrome://browser/content/primitive/PrimitiveExperience.mjs",
     "chrome://browser/content/primitive/PrimitiveNavigation.mjs",
     "chrome://browser/content/primitive/PrimitiveSplit.mjs",
+    "chrome://browser/content/primitive/PrimitiveSpaces.mjs",
   ];
 
   for (let script of scripts) {
