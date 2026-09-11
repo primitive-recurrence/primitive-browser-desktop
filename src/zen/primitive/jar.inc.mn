@@ -12,6 +12,7 @@
         content/browser/primitive/PrimitiveNavigation.mjs                         (../../zen/primitive/PrimitiveNavigation.mjs)
         content/browser/primitive/PrimitiveSplit.mjs                              (../../zen/primitive/PrimitiveSplit.mjs)
         content/browser/primitive/PrimitiveSpaces.mjs                             (../../zen/primitive/PrimitiveSpaces.mjs)
+        content/browser/primitive/PrimitiveToolbar.mjs                            (../../zen/primitive/PrimitiveToolbar.mjs)
         content/browser/primitive/styles/primitive-theme.css                     (../../zen/primitive/styles/primitive-theme.css)
         content/browser/primitive/styles/primitive-shell.css                     (../../zen/primitive/styles/primitive-shell.css)
         content/browser/primitive/styles/primitive-experience.css                (../../zen/primitive/styles/primitive-experience.css)
