@@ -22,6 +22,7 @@ MODULES = [
     "PrimitiveSplit.mjs",
     "PrimitiveSpaces.mjs",
     "PrimitiveToolbar.mjs",
+    "PrimitiveContext.mjs",
 ]
 STYLES = [
     "primitive-theme.css",
@@ -140,6 +141,11 @@ require(spaces, "moveTabToWorkspace", "Zen workspace reuse")
 toolbar = read("src/zen/primitive/PrimitiveToolbar.mjs")
 require(toolbar, "CustomizableUI", "native Firefox toolbar integration")
 require(toolbar, "createWidget", "native Firefox toolbar integration")
+
+context = read("src/zen/primitive/PrimitiveContext.mjs")
+require(context, "zen-workspace-id", "active browser context")
+require(context, "containerId", "active browser context")
+require(context, "splitView", "active browser context")
 
 all_primitive_source = "\n".join(
     read(f"src/zen/primitive/{module}") for module in MODULES
