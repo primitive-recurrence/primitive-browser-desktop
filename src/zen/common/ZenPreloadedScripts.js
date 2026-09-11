@@ -32,6 +32,7 @@
     "chrome://browser/content/primitive/PrimitiveShell.mjs",
     "chrome://browser/content/primitive/PrimitiveCapture.mjs",
     "chrome://browser/content/primitive/PrimitiveExperience.mjs",
+    "chrome://browser/content/primitive/PrimitiveNavigation.mjs",
   ];
 
   for (let script of scripts) {
