@@ -9,6 +9,7 @@
         content/browser/primitive/PrimitiveShell.mjs                              (../../zen/primitive/PrimitiveShell.mjs)
         content/browser/primitive/PrimitiveCapture.mjs                            (../../zen/primitive/PrimitiveCapture.mjs)
         content/browser/primitive/PrimitiveExperience.mjs                         (../../zen/primitive/PrimitiveExperience.mjs)
+        content/browser/primitive/PrimitiveNavigation.mjs                         (../../zen/primitive/PrimitiveNavigation.mjs)
         content/browser/primitive/styles/primitive-theme.css                     (../../zen/primitive/styles/primitive-theme.css)
         content/browser/primitive/styles/primitive-shell.css                     (../../zen/primitive/styles/primitive-shell.css)
         content/browser/primitive/styles/primitive-experience.css                (../../zen/primitive/styles/primitive-experience.css)
