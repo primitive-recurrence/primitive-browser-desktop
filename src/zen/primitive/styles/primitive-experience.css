@@ -1,0 +1,111 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
+:root {
+  --primitive-panel-width: 430px;
+  --primitive-panel-gap: 10px;
+}
+
+.primitive-panel {
+  width: min(var(--primitive-panel-width), calc(100vw - 20px));
+  transition:
+    width 120ms ease,
+    border-radius 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.primitive-panel[data-resizing="true"] {
+  transition: none;
+  user-select: none;
+}
+
+.primitive-panel__resize-handle {
+  position: absolute;
+  z-index: 4;
+  top: 58px;
+  bottom: 8px;
+  left: -6px;
+  width: 12px;
+  cursor: ew-resize;
+  outline: none;
+  touch-action: none;
+}
+
+.primitive-panel__resize-handle::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  width: 2px;
+  height: 48px;
+  translate: 0 -50%;
+  border-radius: 99px;
+  background: var(--primitive-border);
+  opacity: 0;
+  transition: opacity 100ms ease, background 100ms ease;
+}
+
+.primitive-panel__resize-handle:hover::after,
+.primitive-panel__resize-handle:focus-visible::after,
+.primitive-panel[data-resizing="true"] .primitive-panel__resize-handle::after {
+  opacity: 1;
+  background: var(--primitive-primary);
+}
+
+.primitive-panel[data-docked="true"] {
+  top: var(--primitive-panel-gap);
+  right: var(--primitive-panel-gap);
+  bottom: var(--primitive-panel-gap);
+  border-radius: calc(var(--primitive-radius) + 5px);
+  box-shadow: var(--primitive-elevation-low);
+}
+
+/* Docking reserves a real column beside web content. Floating remains the
+ * default because it keeps normal Zen behavior untouched until the user opts in. */
+:root[primitive-panel-open="true"][primitive-panel-docked="true"] #zen-appcontent-wrapper {
+  margin-inline-end: calc(var(--primitive-panel-width) + (var(--primitive-panel-gap) * 2));
+  transition: margin-inline-end 140ms cubic-bezier(.2,.75,.2,1);
+}
+
+:root:not([primitive-panel-docked="true"]) #zen-appcontent-wrapper,
+:root:not([primitive-panel-open="true"]) #zen-appcontent-wrapper {
+  transition: margin-inline-end 140ms cubic-bezier(.2,.75,.2,1);
+}
+
+/* The command center should remain visually centered over the actual browser
+ * work area even when the Primitive panel is docked. */
+:root[primitive-panel-open="true"][primitive-panel-docked="true"] .primitive-command {
+  padding-inline-end: calc(var(--primitive-panel-width) + var(--primitive-panel-gap));
+}
+
+@media (max-width: 860px) {
+  :root[primitive-panel-open="true"][primitive-panel-docked="true"] #zen-appcontent-wrapper {
+    margin-inline-end: 0 !important;
+  }
+
+  :root[primitive-panel-open="true"][primitive-panel-docked="true"] .primitive-command {
+    padding-inline-end: 0;
+  }
+
+  .primitive-panel[data-docked="true"] {
+    top: 48px;
+    right: 6px;
+    bottom: 6px;
+    width: calc(100vw - 12px);
+    max-width: none;
+  }
+
+  .primitive-panel__resize-handle {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primitive-panel,
+  #zen-appcontent-wrapper {
+    transition: none !important;
+  }
+}
