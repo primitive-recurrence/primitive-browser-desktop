@@ -29,6 +29,7 @@
     "chrome://browser/content/zen-components/ZenLiveFoldersUI.mjs",
     "chrome://browser/content/zen-components/ZenDownloadAnimation.mjs",
     "resource:///modules/zen/share/ZenShareManager.mjs",
+    "chrome://browser/content/primitive/PrimitiveShell.mjs",
   ];
 
   for (let script of scripts) {
