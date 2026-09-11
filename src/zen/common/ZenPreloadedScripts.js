@@ -30,6 +30,7 @@
     "chrome://browser/content/zen-components/ZenDownloadAnimation.mjs",
     "resource:///modules/zen/share/ZenShareManager.mjs",
     "chrome://browser/content/primitive/PrimitiveShell.mjs",
+    "chrome://browser/content/primitive/PrimitiveCapture.mjs",
   ];
 
   for (let script of scripts) {
