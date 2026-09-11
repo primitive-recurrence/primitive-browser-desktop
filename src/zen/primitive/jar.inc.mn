@@ -1,0 +1,8 @@
+# Primitive Browser shell module
+# New Primitive-owned files are kept separate from Zen/Firefox source so the
+# browser can track upstream without burying product logic in vendor patches.
+
+        content/browser/primitive/PrimitiveShell.mjs                              (../../zen/primitive/PrimitiveShell.mjs)
+        content/browser/primitive/styles/primitive-theme.css                     (../../zen/primitive/styles/primitive-theme.css)
+        content/browser/primitive/styles/primitive-shell.css                     (../../zen/primitive/styles/primitive-shell.css)
+        content/browser/primitive/assets/primitive-mark.svg                      (../../zen/primitive/assets/primitive-mark.svg)
