@@ -25,7 +25,7 @@ jobs:
   full-build:
     name: Firefox import and compile
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 180
     steps:
       - name: Checkout PR head
         uses: actions/checkout@v4
