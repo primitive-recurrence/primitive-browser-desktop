@@ -29,6 +29,14 @@
     "chrome://browser/content/zen-components/ZenLiveFoldersUI.mjs",
     "chrome://browser/content/zen-components/ZenDownloadAnimation.mjs",
     "resource:///modules/zen/share/ZenShareManager.mjs",
+    "chrome://browser/content/primitive/PrimitiveShell.mjs",
+    "chrome://browser/content/primitive/PrimitiveCapture.mjs",
+    "chrome://browser/content/primitive/PrimitiveExperience.mjs",
+    "chrome://browser/content/primitive/PrimitiveNavigation.mjs",
+    "chrome://browser/content/primitive/PrimitiveSplit.mjs",
+    "chrome://browser/content/primitive/PrimitiveSpaces.mjs",
+    "chrome://browser/content/primitive/PrimitiveToolbar.mjs",
+    "chrome://browser/content/primitive/PrimitiveContext.mjs",
   ];
 
   for (let script of scripts) {

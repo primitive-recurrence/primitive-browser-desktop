@@ -1,0 +1,121 @@
+name: Primitive Browser full build
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - "src/zen/primitive/**"
+      - "src/zen/common/ZenPreloadedScripts.js"
+      - "src/browser/base/content/zen-assets.inc.xhtml"
+      - "src/browser/base/content/zen-assets.jar.inc.mn"
+      - "scripts/primitive_smoke_check.py"
+      - "package.json"
+      - "surfer.json"
+      - ".github/workflows/primitive-browser-build.yml"
+
+concurrency:
+  group: primitive-browser-full-build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  full-build:
+    name: Firefox import and compile
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          submodules: recursive
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Restore Surfer engine cache
+        uses: actions/cache@v5
+        with:
+          path: .surfer/engine/
+          key: primitive-surfer-engine-${{ hashFiles('surfer.json') }}
+
+      - name: Setup Git for Surfer and Firefox bootstrap
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Primitive static gates
+        run: |
+          npm run test:primitive
+          npm run test:primitive:syntax
+
+      - name: Download Firefox and dependencies
+        run: npm run download
+
+      - name: Bootstrap Firefox toolchain
+        run: npm run bootstrap
+
+      - name: Setup shared compiler cache
+        id: sccache
+        continue-on-error: true
+        uses: mozilla-actions/sccache-action@v0.0.9
+
+      - name: Enable shared compiler cache
+        if: steps.sccache.outcome == 'success'
+        run: |
+          echo "SCCACHE_GHA_ENABLED=true" >> "$GITHUB_ENV"
+          echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"
+
+      - name: Prepare engine ignore file
+        run: touch engine/.hgignore
+
+      - name: Import Primitive patches
+        run: npm run import
+
+      - name: Explain license scope
+        run: |
+          echo "Skipping repo-wide surfer license-check as a release blocker."
+          echo "The inherited Zen tree contains upstream binary/test fixtures that cannot carry source headers."
+          echo "Primitive-owned source licensing is reviewed independently; this job validates the exact committed tree compiles."
+
+      - name: Compile Firefox fork
+        run: npm run build
+
+      - name: Package Primitive Browser release candidate
+        env:
+          SURFER_COMPAT: x86_64
+          ZEN_GA_DISABLE_PGO: true
+        run: |
+          export SURFER_PLATFORM="linux"
+          export ZEN_RELEASE=1
+          npm run package
+          archive="$(find dist -maxdepth 1 -type f -name 'zen-*.tar.xz' -print -quit)"
+          test -n "$archive"
+          test -s "$archive"
+          cp "$archive" primitive-browser-v0.1-linux-x86_64.tar.xz
+
+      - name: Verify runnable artifact
+        env:
+          PRIMITIVE_BUILD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          python3 scripts/primitive_artifact_check.py \
+            primitive-browser-v0.1-linux-x86_64.tar.xz \
+            --output primitive-browser-v0.1-linux-x86_64.metadata.json
+
+      - name: Upload runnable Primitive Browser artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: primitive-browser-v0.1-linux-x86_64
+          path: |
+            primitive-browser-v0.1-linux-x86_64.tar.xz
+            primitive-browser-v0.1-linux-x86_64.metadata.json
+          if-no-files-found: error
+          retention-days: 14

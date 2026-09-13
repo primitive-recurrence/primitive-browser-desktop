@@ -1,6 +1,6 @@
 {
-  "name": "Zen Browser",
-  "vendor": "Zen OSS Team",
+  "name": "Primitive Browser",
+  "vendor": "Primitive Labs",
   "appId": "zen",
   "binaryName": "zen",
   "version": {
@@ -15,14 +15,14 @@
   "addons": {},
   "brands": {
     "release": {
-      "backgroundColor": "#282A33",
-      "brandShorterName": "Zen",
-      "brandShortName": "Zen",
-      "brandFullName": "Zen Browser",
+      "backgroundColor": "#A64B2A",
+      "brandShorterName": "Primitive",
+      "brandShortName": "Primitive",
+      "brandFullName": "Primitive Browser",
       "release": {
-        "displayVersion": "1.22.1b",
+        "displayVersion": "0.1.0",
         "github": {
-          "repo": "zen-browser/desktop"
+          "repo": "primitive-recurrence/primitive-browser-desktop"
         },
         "archives": {
           "windows": "windows.mar",
@@ -35,14 +35,14 @@
       }
     },
     "twilight": {
-      "backgroundColor": "#282A33",
-      "brandShorterName": "Zen",
-      "brandShortName": "Twilight",
-      "brandFullName": "Zen Twilight",
+      "backgroundColor": "#A64B2A",
+      "brandShorterName": "Primitive",
+      "brandShortName": "Primitive Preview",
+      "brandFullName": "Primitive Browser Preview",
       "release": {
-        "displayVersion": "1.23t",
+        "displayVersion": "0.1.0-preview",
         "github": {
-          "repo": "zen-browser/desktop"
+          "repo": "primitive-recurrence/primitive-browser-desktop"
         }
       }
     }
@@ -53,5 +53,5 @@
     ],
     "licenseType": "MPL-2.0"
   },
-  "updateHostname": "updates.zen-browser.app"
+  "updateHostname": "updates.primitive.invalid"
 }

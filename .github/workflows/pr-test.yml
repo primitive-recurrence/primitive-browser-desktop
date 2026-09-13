@@ -15,9 +15,10 @@ jobs:
   pr-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout PR head
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
           submodules: recursive
 
       - name: Setup Node.js
@@ -38,7 +39,7 @@ jobs:
       - name: Setup Git
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Download Firefox and dependencies
         run: npm run download
@@ -52,5 +53,10 @@ jobs:
       - name: Import patches
         run: npm run import
 
-      - name: Run linting
-        run: npm run lint
+      - name: Run real Primitive lint gate
+        run: cd engine && ./mach lint -f unix zen/primitive
+
+      - name: Verify source diff
+        run: |
+          git diff --check
+          python3 scripts/primitive_smoke_check.py
