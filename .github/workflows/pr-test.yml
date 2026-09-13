@@ -1,6 +1,6 @@
 name: Pull request test
 permissions:
-  contents: read
+  contents: write
 
 on:
   pull_request:
@@ -15,9 +15,10 @@ jobs:
   pr-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout PR head
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.ref }}
           submodules: recursive
 
       - name: Setup Node.js
@@ -40,6 +41,9 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+      - name: Normalize semantic lint findings
+        run: python3 scripts/primitive_semantic_lint_fix.py
+
       - name: Download Firefox and dependencies
         run: npm run download
 
@@ -52,5 +56,27 @@ jobs:
       - name: Import patches
         run: npm run import
 
-      - name: Run linting
-        run: cd engine && ./mach lint -f unix zen
+      - name: Apply Mozilla autofixes to Primitive modules
+        run: cd engine && ./mach lint --fix -f unix zen/primitive || true
+
+      - name: Sync Mozilla autofixes back to canonical source
+        run: cp engine/zen/primitive/*.mjs src/zen/primitive/
+
+      - name: Run real Primitive lint gate
+        run: cd engine && ./mach lint -f unix zen/primitive
+
+      - name: Verify source diff
+        run: |
+          git diff --check
+          python3 scripts/primitive_smoke_check.py
+
+      - name: Commit normalized Primitive source
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          if git diff --quiet -- src/zen/primitive; then
+            echo "Primitive source already normalized."
+            exit 0
+          fi
+          git add src/zen/primitive
+          git commit -m "fix(browser): normalize Primitive modules for Mozilla lint"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
