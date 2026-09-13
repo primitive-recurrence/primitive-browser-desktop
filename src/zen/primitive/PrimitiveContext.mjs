@@ -11,8 +11,12 @@ const DYNAMIC_MARKER = "primitive-context-dynamic";
 
 function html(tag, className, text) {
   const element = document.createElementNS(HTML_NS, tag);
-  if (className) element.className = className;
-  if (text !== undefined) element.textContent = text;
+  if (className) {
+    element.className = className;
+  }
+  if (text !== undefined) {
+    element.textContent = text;
+  }
   return element;
 }
 
@@ -26,7 +30,9 @@ class PrimitiveContextIntegration {
   }
 
   init() {
-    if (this.shell.__primitiveContextIntegrated) return;
+    if (this.shell.__primitiveContextIntegrated) {
+      return;
+    }
     this.shell.__primitiveContextIntegrated = true;
 
     this.wrapCurrentPage();
@@ -36,7 +42,11 @@ class PrimitiveContextIntegration {
     Services.prefs.addObserver("zen.workspaces.active", this.prefObserver);
     window.addEventListener(
       "unload",
-      () => Services.prefs.removeObserver("zen.workspaces.active", this.prefObserver),
+      () =>
+        Services.prefs.removeObserver(
+          "zen.workspaces.active",
+          this.prefObserver
+        ),
       { once: true }
     );
 
@@ -53,12 +63,16 @@ class PrimitiveContextIntegration {
 
   workspaceFor(tab) {
     const manager = window.gZenWorkspaces;
-    if (!manager) return null;
+    if (!manager) {
+      return null;
+    }
     const id =
       tab?.getAttribute?.("zen-workspace-id") || manager.activeWorkspace || "";
     try {
       const workspace = manager.getWorkspaceFromId?.(id);
-      if (!workspace) return null;
+      if (!workspace) {
+        return null;
+      }
       return {
         id: workspace.uuid,
         name: workspace.name || "Workspace",
@@ -74,7 +88,9 @@ class PrimitiveContextIntegration {
     const tab = window.gBrowser?.selectedTab;
     let isPrivate = false;
     try {
-      isPrivate = Boolean(window.PrivateBrowsingUtils?.isWindowPrivate?.(window));
+      isPrivate = Boolean(
+        window.PrivateBrowsingUtils?.isWindowPrivate?.(window)
+      );
     } catch (_) {}
 
     return {
@@ -101,9 +117,7 @@ class PrimitiveContextIntegration {
       badges.style.marginTop = "8px";
 
       if (context.workspace?.name) {
-        badges.append(
-          html("span", "primitive-badge", context.workspace.name)
-        );
+        badges.append(html("span", "primitive-badge", context.workspace.name));
       }
       if (context.tab?.pinned) {
         badges.append(html("span", "primitive-badge", "Pinned"));
@@ -113,14 +127,20 @@ class PrimitiveContextIntegration {
       }
       if (context.tab?.containerId) {
         badges.append(
-          html("span", "primitive-badge", `Container ${context.tab.containerId}`)
+          html(
+            "span",
+            "primitive-badge",
+            `Container ${context.tab.containerId}`
+          )
         );
       }
       if (context.tab?.private) {
         badges.append(html("span", "primitive-badge", "Private"));
       }
 
-      if (badges.childElementCount) card.append(badges);
+      if (badges.childElementCount) {
+        card.append(badges);
+      }
       return card;
     };
   }
@@ -138,7 +158,9 @@ class PrimitiveContextIntegration {
     );
 
     const tab = window.gBrowser?.selectedTab;
-    if (!tab) return;
+    if (!tab) {
+      return;
+    }
 
     this.shell.commands.push({
       __primitiveMarker: DYNAMIC_MARKER,
@@ -171,14 +193,18 @@ class PrimitiveContextIntegration {
   }
 
   refreshVisibleContext() {
-    if (!this.shell.panel || this.shell.panel.hidden) return;
+    if (!this.shell.panel || this.shell.panel.hidden) {
+      return;
+    }
 
-    const subtitle = this.shell.panel.querySelector(".primitive-brand__subtitle");
+    const subtitle = this.shell.panel.querySelector(
+      ".primitive-brand__subtitle"
+    );
     const context = this.shell.currentPage();
     if (subtitle) {
-      subtitle.textContent = [context.workspace?.name, context.host]
-        .filter(Boolean)
-        .join(" · ") || "Browser workspace";
+      subtitle.textContent =
+        [context.workspace?.name, context.host].filter(Boolean).join(" · ") ||
+        "Browser workspace";
     }
 
     if (["home", "ask", "notes"].includes(this.shell.store.mode)) {

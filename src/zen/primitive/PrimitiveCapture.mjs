@@ -8,7 +8,9 @@ const SEPARATOR_ID = "primitive-context-separator";
 
 function contextSelection() {
   const menu = window.gContextMenu;
-  if (!menu) return "";
+  if (!menu) {
+    return "";
+  }
   return (
     menu.selectionInfo?.text ||
     menu.selectionInfo?.fullText ||
@@ -52,11 +54,15 @@ function saveSelection() {
 function askAboutSelection() {
   const shell = window.gPrimitiveShell;
   const text = contextSelection();
-  if (!shell) return;
+  if (!shell) {
+    return;
+  }
   shell.openSurface("ask");
   requestAnimationFrame(() => {
     const input = document.getElementById("primitive-ask-input");
-    if (!input) return;
+    if (!input) {
+      return;
+    }
     input.value = text
       ? `Regarding this selection:\n\n“${text}”\n\n`
       : "Regarding the current page:\n\n";
@@ -67,7 +73,9 @@ function askAboutSelection() {
 
 function saveLink() {
   const shell = window.gPrimitiveShell;
-  if (!shell) return;
+  if (!shell) {
+    return;
+  }
   const url = currentLink();
   if (!url) {
     shell.notify("No link is selected.");
@@ -97,14 +105,18 @@ function saveLink() {
 
 function addCurrentPageToCanvas() {
   const shell = window.gPrimitiveShell;
-  if (!shell) return;
+  if (!shell) {
+    return;
+  }
   const page = shell.currentPage();
   shell.addCanvasNode("web", page.title, page.url);
   shell.notify("Page added to Primitive Canvas.");
 }
 
 function installContextMenu() {
-  if (document.getElementById(MENU_ID)) return;
+  if (document.getElementById(MENU_ID)) {
+    return;
+  }
   const contextMenu = document.getElementById("contentAreaContextMenu");
   if (!contextMenu) {
     console.warn("[Primitive] Firefox content context menu not found");
@@ -169,7 +181,9 @@ function installContextMenu() {
     const link = currentLink();
     ask.setAttribute(
       "label",
-      selection ? "Ask Primitive about selection" : "Ask Primitive about this page"
+      selection
+        ? "Ask Primitive about selection"
+        : "Ask Primitive about this page"
     );
     save.hidden = !selection;
     saveLinkItem.hidden = !link;
@@ -189,7 +203,9 @@ function initializeCapture() {
 }
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initializeCapture, { once: true });
+  document.addEventListener("DOMContentLoaded", initializeCapture, {
+    once: true,
+  });
 } else {
   initializeCapture();
 }

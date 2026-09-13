@@ -54,8 +54,12 @@ function node(tag, attrs = {}, children = []) {
 
 function button(label, options = {}) {
   const classes = ["primitive-button"];
-  if (options.primary) classes.push("primitive-button--primary");
-  if (options.ghost) classes.push("primitive-button--ghost");
+  if (options.primary) {
+    classes.push("primitive-button--primary");
+  }
+  if (options.ghost) {
+    classes.push("primitive-button--ghost");
+  }
   return node(
     "button",
     {
@@ -87,7 +91,9 @@ function safeId() {
 }
 
 function shorten(value, limit = 82) {
-  if (!value) return "";
+  if (!value) {
+    return "";
+  }
   return value.length > limit ? `${value.slice(0, limit - 1)}…` : value;
 }
 
@@ -104,7 +110,10 @@ class PrimitiveStore {
 
   write(key, value) {
     try {
-      Services.prefs.setStringPref(`${PREF_PREFIX}${key}`, JSON.stringify(value));
+      Services.prefs.setStringPref(
+        `${PREF_PREFIX}${key}`,
+        JSON.stringify(value)
+      );
       return true;
     } catch (error) {
       console.error(`[Primitive] Could not persist ${key}`, error);
@@ -314,7 +323,10 @@ class PrimitiveBrowserShell {
     toolbarButton.id = "primitive-toolbar-button";
     toolbarButton.className = "toolbarbutton-1 chromeclass-toolbar-additional";
     toolbarButton.setAttribute("label", "Primitive");
-    toolbarButton.setAttribute("tooltiptext", "Primitive — open browser workspace");
+    toolbarButton.setAttribute(
+      "tooltiptext",
+      "Primitive — open browser workspace"
+    );
     toolbarButton.setAttribute("removable", "true");
     toolbarButton.setAttribute(
       "image",
@@ -338,7 +350,9 @@ class PrimitiveBrowserShell {
 
   openUrl(rawUrl) {
     let url = rawUrl.trim();
-    if (!url) return;
+    if (!url) {
+      return;
+    }
     if (!/^[a-z][a-z0-9+.-]*:/i.test(url)) {
       url = `https://${url}`;
     }
@@ -469,7 +483,9 @@ class PrimitiveBrowserShell {
   }
 
   updatePanelChrome() {
-    if (!this.panel) return;
+    if (!this.panel) {
+      return;
+    }
     const subtitle = this.panel.querySelector(".primitive-brand__subtitle");
     if (subtitle) {
       subtitle.textContent = this.currentPage().host || "Browser workspace";
@@ -477,12 +493,16 @@ class PrimitiveBrowserShell {
     for (const navButton of this.panel.querySelectorAll(
       ".primitive-nav-button"
     )) {
-      navButton.dataset.active = String(navButton.dataset.mode === this.store.mode);
+      navButton.dataset.active = String(
+        navButton.dataset.mode === this.store.mode
+      );
     }
   }
 
   renderSurface(mode) {
-    if (!this.panelBody) return;
+    if (!this.panelBody) {
+      return;
+    }
     this.store.mode = mode;
     this.updatePanelChrome();
 
@@ -584,7 +604,10 @@ class PrimitiveBrowserShell {
     );
 
     const actions = node("div", { class: "primitive-actions" }, [
-      button("Save page", { primary: true, onclick: () => this.saveCurrentPage() }),
+      button("Save page", {
+        primary: true,
+        onclick: () => this.saveCurrentPage(),
+      }),
       button("Command center", { onclick: () => this.openCommand() }),
       button("Focus web", { ghost: true, onclick: () => this.closePanel() }),
     ]);
@@ -604,7 +627,8 @@ class PrimitiveBrowserShell {
     const promptInput = node("textarea", {
       class: "primitive-textarea",
       id: "primitive-ask-input",
-      placeholder: "Ask about this page, compare it, extract entities, investigate a claim…",
+      placeholder:
+        "Ask about this page, compare it, extract entities, investigate a claim…",
       "aria-label": "Primitive prompt",
     });
     const actions = node("div", { class: "primitive-actions" }, [
@@ -660,7 +684,8 @@ class PrimitiveBrowserShell {
             ]),
             node("div", {
               class: "primitive-list-item__meta",
-              text: item.context?.host || item.context?.url || "Browser context",
+              text:
+                item.context?.host || item.context?.url || "Browser context",
             }),
           ])
         );
@@ -691,7 +716,9 @@ class PrimitiveBrowserShell {
       });
     }
     this.store.write("pages", pages.slice(0, 250));
-    this.notify(existing ? "Saved page refreshed." : "Page added to Primitive notes.");
+    this.notify(
+      existing ? "Saved page refreshed." : "Page added to Primitive notes."
+    );
     if (this.store.mode === "notes" && !this.panel.hidden) {
       this.renderNotes();
     }
@@ -858,7 +885,12 @@ class PrimitiveBrowserShell {
       "aria-label": "Deployment project",
     });
     formSection.append(
-      node("div", { class: "primitive-form-grid" }, [targetNameInput, provider, endpoint, project]),
+      node("div", { class: "primitive-form-grid" }, [
+        targetNameInput,
+        provider,
+        endpoint,
+        project,
+      ]),
       node("div", { class: "primitive-actions" }, [
         button("Save target", {
           primary: true,
@@ -1026,7 +1058,9 @@ class PrimitiveBrowserShell {
                 onclick: () => {
                   const next = this.store.read("flows", []);
                   const record = next.find(item => item.id === flow.id);
-                  if (record) record.enabled = !record.enabled;
+                  if (record) {
+                    record.enabled = !record.enabled;
+                  }
                   this.store.write("flows", next);
                   this.renderFlows();
                 },
@@ -1036,7 +1070,9 @@ class PrimitiveBrowserShell {
                 onclick: () => {
                   this.store.write(
                     "flows",
-                    this.store.read("flows", []).filter(item => item.id !== flow.id)
+                    this.store
+                      .read("flows", [])
+                      .filter(item => item.id !== flow.id)
                   );
                   this.renderFlows();
                 },
@@ -1121,7 +1157,9 @@ class PrimitiveBrowserShell {
       );
 
       canvasNode.addEventListener("dblclick", () => {
-        if (record.url) this.openUrl(record.url);
+        if (record.url) {
+          this.openUrl(record.url);
+        }
       });
       this.bindCanvasDrag(canvasNode, record);
       canvas.append(canvasNode);
@@ -1142,7 +1180,9 @@ class PrimitiveBrowserShell {
 
   bindCanvasDrag(element, record) {
     element.addEventListener("pointerdown", event => {
-      if (event.button !== 0) return;
+      if (event.button !== 0) {
+        return;
+      }
       event.preventDefault();
       element.setPointerCapture(event.pointerId);
       const startX = event.clientX;
@@ -1193,7 +1233,9 @@ class PrimitiveBrowserShell {
       "aria-label": "Primitive browser command",
     });
     input.addEventListener("keydown", event => {
-      if (event.key !== "Enter") return;
+      if (event.key !== "Enter") {
+        return;
+      }
       event.preventDefault();
       const command = input.value.trim();
       input.value = "";
@@ -1203,7 +1245,10 @@ class PrimitiveBrowserShell {
     const terminal = node("div", { class: "primitive-terminal" }, [
       output,
       node("div", { class: "primitive-terminal__prompt" }, [
-        node("span", { class: "primitive-terminal__sigil", text: "primitive ›" }),
+        node("span", {
+          class: "primitive-terminal__sigil",
+          text: "primitive ›",
+        }),
         input,
       ]),
     ]);
@@ -1212,7 +1257,9 @@ class PrimitiveBrowserShell {
   }
 
   runTerminalCommand(command) {
-    if (!command) return;
+    if (!command) {
+      return;
+    }
     this.terminalLines.push(`primitive › ${command}`);
     const [verb, ...rest] = command.split(/\s+/);
     const argument = rest.join(" ").trim();
@@ -1313,14 +1360,18 @@ class PrimitiveBrowserShell {
     });
     input.addEventListener("keydown", event => this.onCommandKeydown(event));
     this.command.addEventListener("mousedown", event => {
-      if (event.target === this.command) this.closeCommand();
+      if (event.target === this.command) {
+        this.closeCommand();
+      }
     });
     this.renderCommandResults("");
   }
 
   filteredCommands(query) {
     const normalized = query.trim().toLowerCase();
-    if (!normalized) return this.commands;
+    if (!normalized) {
+      return this.commands;
+    }
     return this.commands.filter(command =>
       `${command.group} ${command.title} ${command.detail}`
         .toLowerCase()
@@ -1329,7 +1380,9 @@ class PrimitiveBrowserShell {
   }
 
   renderCommandResults(query) {
-    if (!this.commandResults) return;
+    if (!this.commandResults) {
+      return;
+    }
     const commands = this.filteredCommands(query);
     if (this.selectedCommandIndex >= commands.length) {
       this.selectedCommandIndex = Math.max(0, commands.length - 1);
@@ -1431,7 +1484,9 @@ class PrimitiveBrowserShell {
   }
 
   closeCommand() {
-    if (this.command) this.command.hidden = true;
+    if (this.command) {
+      this.command.hidden = true;
+    }
   }
 
   onCommandKeydown(event) {
@@ -1453,7 +1508,9 @@ class PrimitiveBrowserShell {
         commands[this.selectedCommandIndex].run();
       } else {
         const value = this.commandInput?.value.trim();
-        if (value) this.openUrl(value);
+        if (value) {
+          this.openUrl(value);
+        }
       }
     } else if (event.key === "Escape") {
       event.preventDefault();
@@ -1491,18 +1548,24 @@ class PrimitiveBrowserShell {
   }
 
   notify(message) {
-    if (!this.toast) return;
+    if (!this.toast) {
+      return;
+    }
     this.toast.textContent = message;
     this.toast.hidden = false;
     clearTimeout(this.toastTimer);
     this.toastTimer = setTimeout(() => {
-      if (this.toast) this.toast.hidden = true;
+      if (this.toast) {
+        this.toast.hidden = true;
+      }
     }, 2600);
   }
 }
 
 function initializePrimitiveShell() {
-  if (window.gPrimitiveShell) return;
+  if (window.gPrimitiveShell) {
+    return;
+  }
   const shell = new PrimitiveBrowserShell();
   shell.init();
 }

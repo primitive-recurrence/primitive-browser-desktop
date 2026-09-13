@@ -18,8 +18,12 @@ ChromeUtils.defineESModuleGetters(lazy, {
 
 function isLikelyUrl(value) {
   const text = value.trim();
-  if (!text || /\s/.test(text)) return false;
-  if (/^[a-z][a-z0-9+.-]*:/i.test(text)) return true;
+  if (!text || /\s/.test(text)) {
+    return false;
+  }
+  if (/^[a-z][a-z0-9+.-]*:/i.test(text)) {
+    return true;
+  }
   if (/^(localhost|\d{1,3}(?:\.\d{1,3}){3})(:\d+)?(?:\/|$)/i.test(text)) {
     return true;
   }
@@ -27,7 +31,9 @@ function isLikelyUrl(value) {
 }
 
 async function enhanceSearch(shell) {
-  if (shell.__primitiveSearchEnhanced) return;
+  if (shell.__primitiveSearchEnhanced) {
+    return;
+  }
   shell.__primitiveSearchEnhanced = true;
   const openUrl = shell.openUrl.bind(shell);
 
@@ -83,7 +89,9 @@ class PrimitivePanelLayout {
   }
 
   init() {
-    if (!this.panel || this.panel.dataset.layoutReady === "true") return;
+    if (!this.panel || this.panel.dataset.layoutReady === "true") {
+      return;
+    }
     this.panel.dataset.layoutReady = "true";
     this.installDockButton();
     this.installResizeHandle();
@@ -93,8 +101,12 @@ class PrimitivePanelLayout {
 
   installDockButton() {
     const header = this.panel.querySelector(".primitive-panel__header");
-    const closeButton = header?.querySelector(".primitive-icon-button:last-child");
-    if (!header || !closeButton) return;
+    const closeButton = header?.querySelector(
+      ".primitive-icon-button:last-child"
+    );
+    if (!header || !closeButton) {
+      return;
+    }
 
     const button = document.createElementNS(
       "http://www.w3.org/1999/xhtml",
@@ -122,7 +134,9 @@ class PrimitivePanelLayout {
 
     handle.addEventListener("pointerdown", event => this.beginResize(event));
     handle.addEventListener("keydown", event => {
-      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
+        return;
+      }
       event.preventDefault();
       const direction = event.key === "ArrowLeft" ? 1 : -1;
       const step = event.shiftKey ? 40 : 10;
@@ -137,7 +151,9 @@ class PrimitivePanelLayout {
   }
 
   beginResize(event) {
-    if (event.button !== 0) return;
+    if (event.button !== 0) {
+      return;
+    }
     event.preventDefault();
     const startX = event.clientX;
     const startWidth = this.width;
@@ -188,7 +204,9 @@ class PrimitivePanelLayout {
   }
 
   updateDockButton() {
-    if (!this.dockButton) return;
+    if (!this.dockButton) {
+      return;
+    }
     this.dockButton.textContent = this.docked ? "▰" : "▱";
     this.dockButton.title = this.docked
       ? "Undock Primitive panel"
@@ -197,12 +215,16 @@ class PrimitivePanelLayout {
   }
 
   wrapVisibilityMethods() {
-    if (this.shell.__primitiveLayoutWrapped) return;
+    if (this.shell.__primitiveLayoutWrapped) {
+      return;
+    }
     this.shell.__primitiveLayoutWrapped = true;
 
     for (const methodName of ["openPanel", "closePanel", "togglePanel"]) {
       const original = this.shell[methodName]?.bind(this.shell);
-      if (!original) continue;
+      if (!original) {
+        continue;
+      }
       this.shell[methodName] = (...args) => {
         const result = original(...args);
         this.sync();

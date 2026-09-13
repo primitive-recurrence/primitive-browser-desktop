@@ -31,7 +31,9 @@ class PrimitiveSplitIntegration {
   }
 
   init() {
-    if (this.shell.__primitiveSplitIntegrated) return;
+    if (this.shell.__primitiveSplitIntegrated) {
+      return;
+    }
     this.shell.__primitiveSplitIntegrated = true;
 
     this.shell.commands.push({
@@ -58,8 +60,8 @@ class PrimitiveSplitIntegration {
     const splitter = this.splitter();
     return Boolean(
       splitter &&
-        typeof splitter.splitTabs === "function" &&
-        typeof splitter.createEmptySplit === "function"
+      typeof splitter.splitTabs === "function" &&
+      typeof splitter.createEmptySplit === "function"
     );
   }
 
@@ -82,7 +84,9 @@ class PrimitiveSplitIntegration {
   splitWith(tab) {
     const splitter = this.splitter();
     const current = window.gBrowser?.selectedTab;
-    if (!splitter || !current || !tab || current === tab) return;
+    if (!splitter || !current || !tab || current === tab) {
+      return;
+    }
 
     try {
       const result = splitter.splitTabs([current, tab], undefined, 0);
@@ -102,7 +106,9 @@ class PrimitiveSplitIntegration {
       command => command.__primitiveMarker !== DYNAMIC_MARKER
     );
 
-    if (!this.canUseSplit()) return;
+    if (!this.canUseSplit()) {
+      return;
+    }
     const current = window.gBrowser?.selectedTab;
     const tabs = Array.from(window.gBrowser?.tabs || []).filter(
       tab => tab && !tab.closing && tab !== current && tabUrl(tab)

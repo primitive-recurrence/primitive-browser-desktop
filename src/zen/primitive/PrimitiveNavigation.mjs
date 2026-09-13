@@ -57,7 +57,9 @@ class PrimitiveNavigation {
   }
 
   init() {
-    if (this.installed) return;
+    if (this.installed) {
+      return;
+    }
     this.installed = true;
     this.installStaticCommands();
     this.wrapCommandCenter();
@@ -89,10 +91,13 @@ class PrimitiveNavigation {
     const now = new Date();
     sets.unshift({
       id: `tabset-${Date.now().toString(36)}`,
-      title: `Window · ${now.toLocaleDateString()} ${now.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}`,
+      title: `Window · ${now.toLocaleDateString()} ${now.toLocaleTimeString(
+        [],
+        {
+          hour: "2-digit",
+          minute: "2-digit",
+        }
+      )}`,
       createdAt: now.toISOString(),
       tabs,
     });
@@ -203,14 +208,16 @@ class PrimitiveNavigation {
         group: "Portable data",
         icon: "{}",
         title: "Copy current page context as JSON",
-        detail: "Portable browser context for debugging and future Workspace wiring",
+        detail:
+          "Portable browser context for debugging and future Workspace wiring",
         run: () => this.copyPageContext(),
       },
       {
         group: "Portable data",
         icon: "⇩",
         title: "Copy Primitive state snapshot",
-        detail: "Pages, notes, staged prompts, deployments, flows, canvas and tab sets",
+        detail:
+          "Pages, notes, staged prompts, deployments, flows, canvas and tab sets",
         run: () => this.copyStateSnapshot(),
       }
     );

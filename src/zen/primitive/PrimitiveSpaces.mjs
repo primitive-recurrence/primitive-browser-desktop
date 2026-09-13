@@ -9,10 +9,13 @@
 const DYNAMIC_MARKER = "primitive-spaces-dynamic";
 
 function workspaceLabel(workspace) {
-  if (!workspace) return "Workspace";
-  const icon = workspace.icon && !String(workspace.icon).endsWith(".svg")
-    ? `${workspace.icon} `
-    : "";
+  if (!workspace) {
+    return "Workspace";
+  }
+  const icon =
+    workspace.icon && !String(workspace.icon).endsWith(".svg")
+      ? `${workspace.icon} `
+      : "";
   return `${icon}${workspace.name || "Workspace"}`.trim();
 }
 
@@ -24,7 +27,9 @@ class PrimitiveSpacesIntegration {
   }
 
   async init() {
-    if (this.shell.__primitiveSpacesIntegrated) return;
+    if (this.shell.__primitiveSpacesIntegrated) {
+      return;
+    }
     this.shell.__primitiveSpacesIntegrated = true;
 
     const manager = window.gZenWorkspaces;
@@ -36,7 +41,10 @@ class PrimitiveSpacesIntegration {
     try {
       await manager.promiseInitialized;
     } catch (error) {
-      console.warn("[Primitive] Zen workspaces did not initialize cleanly", error);
+      console.warn(
+        "[Primitive] Zen workspaces did not initialize cleanly",
+        error
+      );
     }
 
     this.ready = true;
@@ -60,7 +68,11 @@ class PrimitiveSpacesIntegration {
 
   activeWorkspace() {
     const manager = this.manager();
-    return this.workspaces().find(space => space.uuid === manager?.activeWorkspace) || null;
+    return (
+      this.workspaces().find(
+        space => space.uuid === manager?.activeWorkspace
+      ) || null
+    );
   }
 
   installNavigationCommands() {
@@ -84,13 +96,17 @@ class PrimitiveSpacesIntegration {
 
   stepWorkspace(direction) {
     const manager = this.manager();
-    if (!manager) return;
+    if (!manager) {
+      return;
+    }
     try {
       if (typeof manager.changeWorkspaceShortcut === "function") {
         manager.changeWorkspaceShortcut(direction);
       } else {
         const spaces = this.workspaces();
-        if (!spaces.length) return;
+        if (!spaces.length) {
+          return;
+        }
         const current = Math.max(
           0,
           spaces.findIndex(space => space.uuid === manager.activeWorkspace)
@@ -107,7 +123,9 @@ class PrimitiveSpacesIntegration {
 
   async switchWorkspace(workspace) {
     const manager = this.manager();
-    if (!manager || !workspace) return;
+    if (!manager || !workspace) {
+      return;
+    }
     try {
       await manager.changeWorkspace(workspace);
       this.shell.closeCommand();
@@ -121,7 +139,9 @@ class PrimitiveSpacesIntegration {
   async moveCurrentTab(workspace) {
     const manager = this.manager();
     const tab = window.gBrowser?.selectedTab;
-    if (!manager || !tab || !workspace) return;
+    if (!manager || !tab || !workspace) {
+      return;
+    }
 
     try {
       if (typeof manager.moveTabToWorkspace !== "function") {
@@ -142,7 +162,9 @@ class PrimitiveSpacesIntegration {
       command => command.__primitiveMarker !== DYNAMIC_MARKER
     );
 
-    if (!this.ready) return;
+    if (!this.ready) {
+      return;
+    }
     const manager = this.manager();
     const activeId = manager?.activeWorkspace;
 
