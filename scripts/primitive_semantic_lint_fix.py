@@ -17,6 +17,8 @@ def replace(path: Path, old: str, new: str, label: str) -> None:
     if new and new in text:
         return
     if old not in text:
+        if not new:
+            return
         raise RuntimeError(f"{label}: expected source shape not found in {path}")
     path.write_text(text.replace(old, new, 1), encoding="utf-8")
 
@@ -35,15 +37,20 @@ capture = PRIMITIVE / "PrimitiveCapture.mjs"
 replace(capture, '  const open = createMenuItem(\n', '  const openButton = createMenuItem(\n', "capture open variable")
 replace(capture, '    open\n  );\n', '    openButton\n  );\n', "capture open append")
 
-# PrimitiveExperience: privileged Firefox search services have changed across
-# upstream versions. Keep the honest, browser-native fallback instead of using
-# an invalid Services.search member, and make return behavior explicit.
+# PrimitiveExperience: use Firefox's supported SearchService module rather than
+# the invalid Services.search member, and make return behavior explicit.
 experience = PRIMITIVE / "PrimitiveExperience.mjs"
 replace(
     experience,
-    '''    try {\n      const engine = await Services.search.getDefault();\n      const submission = engine?.getSubmission(value, null, "keyword");\n      if (submission?.uri?.spec) {\n        return openUrl(submission.uri.spec);\n      }\n    } catch (error) {\n      console.warn("[Primitive] Default search submission unavailable", error);\n    }\n\n    // Honest fallback: stage the query in Firefox's own address bar and leave\n    // execution to the user rather than constructing an unreliable search URL.\n''',
-    '''    // Stage non-URL input in Firefox's own address bar and leave search\n    // execution to the browser/user rather than depending on an unstable\n    // privileged search-service API.\n''',
-    "experience search service",
+    'const DEFAULT_PANEL_WIDTH = 430;\n',
+    '''const DEFAULT_PANEL_WIDTH = 430;\nconst lazy = {};\n\nChromeUtils.defineESModuleGetters(lazy, {\n  SearchService: "moz-src:///toolkit/components/search/SearchService.sys.mjs",\n});\n''',
+    "experience SearchService import",
+)
+replace_all(
+    experience,
+    "Services.search.getDefault()",
+    "lazy.SearchService.getDefault()",
+    "experience SearchService access",
 )
 replace(
     experience,

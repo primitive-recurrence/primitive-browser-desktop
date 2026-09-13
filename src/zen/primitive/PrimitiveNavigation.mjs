@@ -275,8 +275,8 @@ function initializeNavigation(attempt = 0) {
     return;
   }
 
-  const navigation = new PrimitiveNavigation(shell);
-  navigation.init();
+  const primitiveNavigation = new PrimitiveNavigation(shell);
+  primitiveNavigation.init();
 }
 
 if (document.readyState === "loading") {

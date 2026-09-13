@@ -145,7 +145,7 @@ function installContextMenu() {
     addCurrentPageToCanvas,
     "primitive-context-canvas"
   );
-  const open = createMenuItem(
+  const openButton = createMenuItem(
     "Open Primitive panel",
     () => window.gPrimitiveShell?.openSurface("home"),
     "primitive-context-open"
@@ -159,7 +159,7 @@ function installContextMenu() {
     saveLinkItem,
     canvas,
     document.createXULElement("menuseparator"),
-    open
+    openButton
   );
   menu.append(popup);
   contextMenu.append(separator, menu);

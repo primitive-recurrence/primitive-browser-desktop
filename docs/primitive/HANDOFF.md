@@ -469,3 +469,24 @@ This checkpoint is intentionally operational so another Work account can resume 
   2. After Surfer import, `engine/zen/primitive/*.mjs` and `src/zen/primitive/*.mjs` resolve to the same files, so the explicit `cp` sync step exited with “are the same file”.
 - The commit containing this checkpoint fixes both mechanical faults. The lint workflow still applies Mozilla autofixes, runs the real `mach lint -f unix zen/primitive` gate, verifies smoke/diff, and commits normalized Primitive source to the PR branch.
 - Resume rule: inspect the newest PR head and workflow runs first. If lint has pushed a normalization commit, review that exact diff, confirm lint green, then continue with the full native build gate. Do not repeat the estate audit or reopen Browser/Workspace/Harness architecture.
+
+### Follow-up diagnosis and prepared source fix
+
+Local verification exposed one additional contract issue before CI could commit its autofix: removing `Services.search` entirely made the Browser smoke gate fail because v0.1 promises native default-engine search when available. Firefox 155's supported pattern is already used in this fork's `src/zen/welcome/ZenWelcome.mjs`:
+
+```js
+ChromeUtils.defineESModuleGetters(lazy, {
+  SearchService: "moz-src:///toolkit/components/search/SearchService.sys.mjs",
+});
+```
+
+`PrimitiveExperience.mjs` now uses `lazy.SearchService.getDefault()`, preserves URL opening and the honest address-bar fallback, and never hardcodes an external search engine. The smoke check asserts the supported module seam and explicitly forbids `Services.search`.
+
+Verified locally after applying semantic normalization twice:
+
+- `python3 scripts/primitive_semantic_lint_fix.py` twice: **green / idempotent**
+- `git diff --check`: **green**
+- `npm run test:primitive`: **green**
+- `npm run test:primitive:syntax`: **green**
+
+The next authority is the commit containing this section and its newest GitHub runs. The earlier lint run from `b3050cff` is expected to fail its smoke step because it began before this corrected SearchService patch; do not repair or rerun that obsolete run.

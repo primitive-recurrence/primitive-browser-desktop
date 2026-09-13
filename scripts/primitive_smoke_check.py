@@ -122,7 +122,13 @@ require(capture, "contentAreaContextMenu", "context capture")
 require(capture, "Save selection to Notes", "context capture")
 
 experience = read("src/zen/primitive/PrimitiveExperience.mjs")
-require(experience, "Services.search.getDefault", "default search integration")
+require(
+    experience,
+    'SearchService: "moz-src:///toolkit/components/search/SearchService.sys.mjs"',
+    "default search integration",
+)
+require(experience, "lazy.SearchService.getDefault", "default search integration")
+forbid(experience, "Services.search", "default search integration")
 require(experience, "panelDocked", "dock persistence")
 require(experience, "panelWidth", "resize persistence")
 

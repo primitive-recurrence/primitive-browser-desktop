@@ -10,6 +10,11 @@ const PREF_PREFIX = "primitive.browser.shell.";
 const MIN_PANEL_WIDTH = 340;
 const MAX_PANEL_WIDTH = 720;
 const DEFAULT_PANEL_WIDTH = 430;
+const lazy = {};
+
+ChromeUtils.defineESModuleGetters(lazy, {
+  SearchService: "moz-src:///toolkit/components/search/SearchService.sys.mjs",
+});
 
 function isLikelyUrl(value) {
   const text = value.trim();
@@ -33,7 +38,7 @@ async function enhanceSearch(shell) {
     }
 
     try {
-      const engine = await Services.search.getDefault();
+      const engine = await lazy.SearchService.getDefault();
       const submission = engine?.getSubmission(value, null, "keyword");
       if (submission?.uri?.spec) {
         return openUrl(submission.uri.spec);
@@ -51,6 +56,7 @@ async function enhanceSearch(shell) {
       window.gURLBar.select();
       shell.notify("Search staged in the address bar — press Enter.");
     }
+    return undefined;
   };
 }
 
@@ -194,10 +200,10 @@ class PrimitivePanelLayout {
     if (this.shell.__primitiveLayoutWrapped) return;
     this.shell.__primitiveLayoutWrapped = true;
 
-    for (const name of ["openPanel", "closePanel", "togglePanel"]) {
-      const original = this.shell[name]?.bind(this.shell);
+    for (const methodName of ["openPanel", "closePanel", "togglePanel"]) {
+      const original = this.shell[methodName]?.bind(this.shell);
       if (!original) continue;
-      this.shell[name] = (...args) => {
+      this.shell[methodName] = (...args) => {
         const result = original(...args);
         this.sync();
         return result;

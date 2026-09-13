@@ -282,7 +282,6 @@ class PrimitiveBrowserShell {
     );
 
     window.gPrimitiveShell = this;
-    console.info("[Primitive] Browser shell initialized");
   }
 
   destroy() {
@@ -374,10 +373,10 @@ class PrimitiveBrowserShell {
   }
 
   togglePanel() {
-    const open = this.panel.hidden;
-    this.panel.hidden = !open;
-    this.store.panelOpen = open;
-    if (open) {
+    const shouldOpen = this.panel.hidden;
+    this.panel.hidden = !shouldOpen;
+    this.store.panelOpen = shouldOpen;
+    if (shouldOpen) {
       this.renderSurface(this.store.mode);
     }
   }
@@ -567,8 +566,8 @@ class PrimitiveBrowserShell {
     }
     quick.append(cards);
 
-    const status = section("Runtime", null, null);
-    status.append(
+    const runtimeSection = section("Runtime", null, null);
+    runtimeSection.append(
       node("div", { class: "primitive-runtime-card" }, [
         node("div", { class: "primitive-runtime-card__dot" }),
         node("div", {}, [
@@ -589,9 +588,9 @@ class PrimitiveBrowserShell {
       button("Command center", { onclick: () => this.openCommand() }),
       button("Focus web", { ghost: true, onclick: () => this.closePanel() }),
     ]);
-    status.append(actions);
+    runtimeSection.append(actions);
 
-    this.panelBody.replaceChildren(head, quick, status);
+    this.panelBody.replaceChildren(head, quick, runtimeSection);
   }
 
   renderAsk() {
@@ -602,7 +601,7 @@ class PrimitiveBrowserShell {
     );
     head.append(this.pageContextCard());
 
-    const prompt = node("textarea", {
+    const promptInput = node("textarea", {
       class: "primitive-textarea",
       id: "primitive-ask-input",
       placeholder: "Ask about this page, compare it, extract entities, investigate a claim…",
@@ -612,10 +611,10 @@ class PrimitiveBrowserShell {
       button("Stage prompt", {
         primary: true,
         onclick: () => {
-          const text = prompt.value.trim();
+          const text = promptInput.value.trim();
           if (!text) {
             this.notify("Write a prompt first.");
-            prompt.focus();
+            promptInput.focus();
             return;
           }
           const prompts = this.store.read("prompts", []);
@@ -627,7 +626,7 @@ class PrimitiveBrowserShell {
             createdAt: new Date().toISOString(),
           });
           this.store.write("prompts", prompts.slice(0, 50));
-          prompt.value = "";
+          promptInput.value = "";
           this.notify("Prompt staged locally — runtime not connected yet.");
           this.renderAsk();
         },
@@ -669,8 +668,8 @@ class PrimitiveBrowserShell {
       stagedSection.append(list);
     }
 
-    this.panelBody.replaceChildren(head, prompt, actions, stagedSection);
-    requestAnimationFrame(() => prompt.focus());
+    this.panelBody.replaceChildren(head, promptInput, actions, stagedSection);
+    requestAnimationFrame(() => promptInput.focus());
   }
 
   saveCurrentPage() {
@@ -748,7 +747,7 @@ class PrimitiveBrowserShell {
     } else {
       const list = node("div", { class: "primitive-list" });
       for (const page of pages) {
-        const open = button("Open", {
+        const openButton = button("Open", {
           ghost: true,
           onclick: () => this.openUrl(page.url),
         });
@@ -774,7 +773,7 @@ class PrimitiveBrowserShell {
               text: page.url,
               title: page.url,
             }),
-            node("div", { class: "primitive-actions" }, [open, remove]),
+            node("div", { class: "primitive-actions" }, [openButton, remove]),
           ])
         );
       }
@@ -818,7 +817,7 @@ class PrimitiveBrowserShell {
       "The interaction model is inspired by self-hosted deployment control planes such as Coolify. This pass stores target configuration only; it does not call a deployment API."
     );
 
-    const status = node("div", { class: "primitive-runtime-card" }, [
+    const statusCard = node("div", { class: "primitive-runtime-card" }, [
       node("div", { class: "primitive-runtime-card__dot" }),
       node("div", {}, [
         node("div", {
@@ -831,10 +830,10 @@ class PrimitiveBrowserShell {
         }),
       ]),
     ]);
-    head.append(status);
+    head.append(statusCard);
 
     const formSection = section("Add target", null, null);
-    const name = node("input", {
+    const targetNameInput = node("input", {
       class: "primitive-field",
       id: "primitive-deploy-name",
       placeholder: "Production",
@@ -859,14 +858,14 @@ class PrimitiveBrowserShell {
       "aria-label": "Deployment project",
     });
     formSection.append(
-      node("div", { class: "primitive-form-grid" }, [name, provider, endpoint, project]),
+      node("div", { class: "primitive-form-grid" }, [targetNameInput, provider, endpoint, project]),
       node("div", { class: "primitive-actions" }, [
         button("Save target", {
           primary: true,
           onclick: () => {
-            const targetName = name.value.trim();
+            const targetName = targetNameInput.value.trim();
             if (!targetName) {
-              name.focus();
+              targetNameInput.focus();
               return;
             }
             const targets = this.store.read("deploymentTargets", []);
@@ -945,7 +944,7 @@ class PrimitiveBrowserShell {
     );
 
     const formSection = section("New flow", null, null);
-    const name = node("input", {
+    const flowNameInput = node("input", {
       class: "primitive-field",
       id: "primitive-flow-name",
       placeholder: "When I save a page → add it to research",
@@ -964,7 +963,7 @@ class PrimitiveBrowserShell {
       "aria-label": "Workflow action",
     });
     formSection.append(
-      name,
+      flowNameInput,
       node("div", { class: "primitive-form-grid", style: "margin-top:7px" }, [
         trigger,
         action,
@@ -973,14 +972,14 @@ class PrimitiveBrowserShell {
         button("Create draft", {
           primary: true,
           onclick: () => {
-            if (!name.value.trim()) {
-              name.focus();
+            if (!flowNameInput.value.trim()) {
+              flowNameInput.focus();
               return;
             }
             const flows = this.store.read("flows", []);
             flows.unshift({
               id: safeId(),
-              name: name.value.trim(),
+              name: flowNameInput.value.trim(),
               trigger: trigger.value.trim() || "Manual",
               action: action.value.trim() || "Unconfigured",
               enabled: false,

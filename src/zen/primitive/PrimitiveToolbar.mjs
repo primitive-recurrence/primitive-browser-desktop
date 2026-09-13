@@ -21,8 +21,8 @@ function customizableUI() {
 }
 
 function registerPrimitiveWidget() {
-  const CustomizableUI = customizableUI();
-  if (!CustomizableUI) {
+  const customizableUIApi = customizableUI();
+  if (!customizableUIApi) {
     return;
   }
 
@@ -31,11 +31,11 @@ function registerPrimitiveWidget() {
   document.getElementById(WIDGET_ID)?.remove();
 
   try {
-    if (!CustomizableUI.getWidget(WIDGET_ID)) {
-      CustomizableUI.createWidget({
+    if (!customizableUIApi.getWidget(WIDGET_ID)) {
+      customizableUIApi.createWidget({
         id: WIDGET_ID,
         type: "button",
-        defaultArea: CustomizableUI.AREA_NAVBAR,
+        defaultArea: customizableUIApi.AREA_NAVBAR,
         removable: true,
         label: "Primitive",
         tooltiptext: "Primitive — browser workspace",
@@ -54,7 +54,7 @@ function registerPrimitiveWidget() {
   }
 
   try {
-    const widget = CustomizableUI.getWidget(WIDGET_ID)?.forWindow?.(window);
+    const widget = customizableUIApi.getWidget(WIDGET_ID)?.forWindow?.(window);
     const widgetNode = widget?.node;
     if (widgetNode) {
       widgetNode.setAttribute(
