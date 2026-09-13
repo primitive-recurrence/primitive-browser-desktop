@@ -452,3 +452,20 @@ This code pass is ready for Work when:
 - the UX can be reviewed end-to-end without `primitive-workspace`.
 
 After that review, the correct next engineering task is not more browser chrome. It is replacing the local prototype store and staged actions with a typed browser bridge into the existing Primitive Workspace runtime.
+
+
+## Active Work checkpoint — 2026-09-13 12:33 UTC
+
+This checkpoint is intentionally operational so another Work account can resume without re-auditing the repository.
+
+- Release PR: [#1](https://github.com/primitive-recurrence/primitive-browser-desktop/pull/1)
+- Working branch at diagnosis: `primitive/browser-shell-v0.1`
+- Starting head: `6787fcd9fa27a00d4f3ba8ea83a76dbdb6418b9f`
+- Static preflight run `34756447338`: **green**
+- Native full-build run `34756447318`: **still compiling** at this checkpoint. Its checkout/import/bootstrap/static steps are green. Do not classify it as failed unless the completed run or compiler log proves that.
+- Lint run `34756447339`: failed at the source-sync step, not at checkout/import/bootstrap.
+- Confirmed lint causes:
+  1. `replace(..., new="")` in `primitive_semantic_lint_fix.py` returned early because the empty string is contained in every string, so the known `console.info` removal was skipped.
+  2. After Surfer import, `engine/zen/primitive/*.mjs` and `src/zen/primitive/*.mjs` resolve to the same files, so the explicit `cp` sync step exited with “are the same file”.
+- The commit containing this checkpoint fixes both mechanical faults. The lint workflow still applies Mozilla autofixes, runs the real `mach lint -f unix zen/primitive` gate, verifies smoke/diff, and commits normalized Primitive source to the PR branch.
+- Resume rule: inspect the newest PR head and workflow runs first. If lint has pushed a normalization commit, review that exact diff, confirm lint green, then continue with the full native build gate. Do not repeat the estate audit or reopen Browser/Workspace/Harness architecture.

@@ -14,7 +14,7 @@ PRIMITIVE = ROOT / "src" / "zen" / "primitive"
 
 def replace(path: Path, old: str, new: str, label: str) -> None:
     text = path.read_text(encoding="utf-8")
-    if new in text:
+    if new and new in text:
         return
     if old not in text:
         raise RuntimeError(f"{label}: expected source shape not found in {path}")
