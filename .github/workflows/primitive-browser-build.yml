@@ -77,3 +77,34 @@ jobs:
 
       - name: Compile Firefox fork
         run: npm run build
+
+      - name: Package Primitive Browser release candidate
+        env:
+          SURFER_COMPAT: x86_64
+          ZEN_GA_DISABLE_PGO: true
+        run: |
+          export SURFER_PLATFORM="linux"
+          export ZEN_RELEASE=1
+          npm run package
+          archive="$(find dist -maxdepth 1 -type f -name 'zen-*.tar.xz' -print -quit)"
+          test -n "$archive"
+          test -s "$archive"
+          cp "$archive" primitive-browser-v0.1-linux-x86_64.tar.xz
+
+      - name: Verify runnable artifact
+        env:
+          PRIMITIVE_BUILD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          python3 scripts/primitive_artifact_check.py \
+            primitive-browser-v0.1-linux-x86_64.tar.xz \
+            --output primitive-browser-v0.1-linux-x86_64.metadata.json
+
+      - name: Upload runnable Primitive Browser artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: primitive-browser-v0.1-linux-x86_64
+          path: |
+            primitive-browser-v0.1-linux-x86_64.tar.xz
+            primitive-browser-v0.1-linux-x86_64.metadata.json
+          if-no-files-found: error
+          retention-days: 14

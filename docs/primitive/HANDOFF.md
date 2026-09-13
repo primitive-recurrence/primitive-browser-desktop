@@ -490,3 +490,13 @@ Verified locally after applying semantic normalization twice:
 - `npm run test:primitive:syntax`: **green**
 
 The next authority is the commit containing this section and its newest GitHub runs. The earlier lint run from `b3050cff` is expected to fail its smoke step because it began before this corrected SearchService patch; do not repair or rerun that obsolete run.
+
+### Lint closure and runnable-artifact gate
+
+- Mozilla lint run `34758032658`: **green**. It passed the real `./mach lint -f unix zen/primitive` gate, Primitive smoke verification, and syntax verification.
+- Formatter-only source commit: `b135cd3e06353c55a361565f808adbdb47e9222e`.
+- The formatter diff was reviewed as semantic-preserving (`curly` and Prettier changes only).
+- The self-modifying lint workflow is now retired: it is read-only, checks the immutable PR head SHA, and no longer autofixes or pushes commits.
+- The full-build workflow now packages the compiled Linux x86_64 Browser, verifies the `zen` executable and required Primitive omni.ja entries, writes SHA-256/build metadata, and uploads both files as the `primitive-browser-v0.1-linux-x86_64` workflow artifact.
+
+Resume from the newest user-authored commit after `b135cd3e`. The next unresolved gate is that commit's full native build/package/artifact run.
