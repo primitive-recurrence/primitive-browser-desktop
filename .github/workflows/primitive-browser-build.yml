@@ -63,6 +63,17 @@ jobs:
       - name: Bootstrap Firefox toolchain
         run: npm run bootstrap
 
+      - name: Setup shared compiler cache
+        id: sccache
+        continue-on-error: true
+        uses: mozilla-actions/sccache-action@v0.0.9
+
+      - name: Enable shared compiler cache
+        if: steps.sccache.outcome == 'success'
+        run: |
+          echo "SCCACHE_GHA_ENABLED=true" >> "$GITHUB_ENV"
+          echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"
+
       - name: Prepare engine ignore file
         run: touch engine/.hgignore
 
